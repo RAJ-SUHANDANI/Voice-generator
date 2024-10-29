@@ -1,0 +1,67 @@
+import { useState } from 'react';
+
+const voices = [
+  { id: 1, name: 'English (Male)' },
+  { id: 2, name: 'English (Female)' },
+  { id: 3, name: 'Spanish (Male)' },
+  { id: 4, name: 'Spanish (Female)' },
+  { id: 5, name: 'French (Male)' },
+  { id: 6, name: 'French (Female)' },
+];
+
+const textToSpeech = (text: string, voiceId: number) => {
+  const speech = new SpeechSynthesisUtterance(text);
+  speech.voice = window.speechSynthesis.getVoices()[voiceId - 1];
+  window.speechSynthesis.speak(speech);
+};
+
+const VoiceGenerator = () => {
+  const [text, setText] = useState('');
+  const [selectedVoice, setSelectedVoice] = useState(1);
+
+  const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setText(e.target.value);
+  };
+
+  const handleVoiceChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedVoice(parseInt(e.target.value));
+  };
+
+  const handleGenerateVoice = () => {
+    textToSpeech(text, selectedVoice);
+  };
+
+  return (
+    <div className="max-w-3xl mx-auto p-4 mt-12 bg-white rounded-lg shadow-md">
+      <h1 className="text-3xl font-bold text-gray-900 mb-4">AI Voice Generator</h1>
+      <textarea
+        className="w-full p-4 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-gray-400"
+        value={text}
+        onChange={handleTextChange}
+        placeholder="Enter your text here..."
+      />
+      <div className="flex flex-col mb-4">
+        <label className="text-lg font-bold text-gray-900 mb-2">Select Voice:</label>
+        <select
+          className="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-gray-400"
+          value={selectedVoice}
+          onChange={handleVoiceChange}
+        >
+          {voices.map((voice) => (
+            <option key={voice.id} value={voice.id}>
+              {voice.name}
+            </option>
+          ))}
+        </select>
+      </div>
+      <button
+        className="w-full p-4 bg-blue-500 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-400"
+        onClick={handleGenerateVoice}
+      >
+        Generate Voice
+      </button>
+    </div>
+  );
+};
+
+export default VoiceGenerator;
